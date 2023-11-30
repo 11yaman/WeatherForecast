@@ -1,7 +1,9 @@
 package com.example.weatherforecast.di
 
-import com.example.weatherforecast.repository.WeatherRepository
-import com.example.weatherforecast.repository.impl.WeatherRepositoryImpl
+import com.example.weatherforecast.domain.repository.PlaceRepository
+import com.example.weatherforecast.data.network.PlaceRepositoryImpl
+import com.example.weatherforecast.domain.repository.WeatherRepository
+import com.example.weatherforecast.data.network.WeatherRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -19,4 +21,10 @@ abstract class RepositoryModule {
     abstract fun bindWeatherRepository(
         weatherRepositoryImpl: WeatherRepositoryImpl
     ): WeatherRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPlaceRepository(
+        placeRepository: PlaceRepositoryImpl
+    ): PlaceRepository
 }

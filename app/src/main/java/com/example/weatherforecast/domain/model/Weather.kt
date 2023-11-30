@@ -1,11 +1,10 @@
-package com.example.weatherforecast.model
+package com.example.weatherforecast.domain.model
 
-import android.location.Location
 import java.time.LocalDateTime
 
 data class Weather(
-    val latitude: Double,
-    val longitude: Double,
+    val place: Place,
     val hourlyWeather: Map<LocalDateTime, HourlyWeather>,
+    val dailyWeather: Map<Int, List<HourlyWeather>>,
     val currentWeather: HourlyWeather?
 )
