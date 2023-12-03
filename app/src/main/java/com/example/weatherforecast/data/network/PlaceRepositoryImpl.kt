@@ -13,8 +13,8 @@ class PlaceRepositoryImpl @Inject constructor(private val api: GeocodingAPI):
             Response.Success(
                 data = places.map {
                     val displayNameParts = it.name.split(", ")
-                    val place = displayNameParts.firstOrNull()
-                    val country = displayNameParts.lastOrNull()
+                    val place = displayNameParts.first()
+                    val country = displayNameParts.last()
                     Place(
                         latitude = it.lat,
                         longitude = it.lon,
@@ -26,7 +26,7 @@ class PlaceRepositoryImpl @Inject constructor(private val api: GeocodingAPI):
             )
         } catch(e: Exception) {
             e.printStackTrace()
-            Response.Error(e.message ?: "An error occurred.")
+            Response.Error("Could not retrieve places")
         }
         return response;
     }

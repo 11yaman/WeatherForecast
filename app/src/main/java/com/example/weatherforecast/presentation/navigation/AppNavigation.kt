@@ -17,7 +17,8 @@ import com.example.weatherforecast.presentation.viewmodels.WeatherViewModel
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val weatherRoute = "${AppScreens.WeatherScreen.name}?latitude={latitude}&longitude={longitude}&name={name}&country={country}"
+    val weatherRoute =
+        "${AppScreens.WeatherScreen.name}?latitude={latitude}&longitude={longitude}&name={name}&country={country}"
 
     NavHost(
         navController = navController,
@@ -27,32 +28,34 @@ fun AppNavigation() {
             arguments = listOf(
                 navArgument(name = "latitude") {
                     type = NavType.FloatType
-                    defaultValue = 59.3294f
                 },
                 navArgument(name = "longitude") {
                     type = NavType.FloatType
-                    defaultValue = 18.0687f
                 },
                 navArgument(name = "name") {
                     type = NavType.StringType
-                    defaultValue = ""
                 },
                 navArgument(name = "country") {
                     type = NavType.StringType
-                    defaultValue = ""
                 }
             )
         ) {
-            val lat = it.arguments?.getFloat("latitude") ?: 59.3294f// TODO: Change To recent place
-            val long = it.arguments?.getFloat("longitude") ?: 18.0687f
+            val lat = it.arguments?.getFloat("latitude")
+            val long = it.arguments?.getFloat("longitude")
             val name = it.arguments?.getString("name")
             val country = it.arguments?.getString("country")
+
+            val place: Place? = if (lat!=null && long!=null && !name.isNullOrBlank() && !country.isNullOrBlank()) {
+                Place(latitude = lat, longitude = long, name = name, country = country)
+            } else {
+                null
+            }
 
             val weatherViewModel = hiltViewModel<WeatherViewModel>()
             WeatherScreen(
                 navController = navController,
                 viewModel = weatherViewModel,
-                place = Place(latitude = lat, longitude = long, name = name, country = country)
+                place = place
             )
         }
 

@@ -30,7 +30,6 @@ import com.example.weatherforecast.presentation.navigation.AppScreens
 @Composable
 fun AppBar(
     title: String,
-    //navController: NavController,
     currentScreen: AppScreens,
     onSearchClick: () -> Unit = {},
     onBackClicked: () -> Unit = {}
@@ -96,6 +95,7 @@ fun SettingsMenu() {
         )
         DropdownMenuItem(
             onClick = {
+                expanded = false
             },
             modifier = Modifier,
             text = {

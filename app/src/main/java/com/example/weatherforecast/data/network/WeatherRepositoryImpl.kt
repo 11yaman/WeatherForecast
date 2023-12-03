@@ -16,11 +16,10 @@ class WeatherRepositoryImpl @Inject constructor(private val api: WeatherForecast
                 data = api.getWeatherData(
                     latitude = place.latitude.toDouble(),
                     longitude = place.longitude.toDouble()
-                ).toWeather()
+                ).toWeather(place)
             )
         } catch(e: Exception) {
-            e.printStackTrace()
-            Response.Error(e.message ?: "An error occurred.")
+            Response.Error("Could not retrieve weather data")
         }
          return response;
     }

@@ -54,7 +54,7 @@ fun WeatherCard(data: Weather) {
                     .format(DateTimeFormatter.ofPattern("dd MMMM") )
 
                 Text(
-                    text = "Today $formattedDate",
+                    text = formattedDate,
                     modifier = Modifier
                 )
                 Spacer(modifier = Modifier.height(16.dp))

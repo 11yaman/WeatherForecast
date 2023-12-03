@@ -1,5 +1,6 @@
 package com.example.weatherforecast.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,7 @@ fun DailyWeatherList(dailyWeather: Map<Int, List<HourlyWeather>>) {
                 .padding(4.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             content = {
-                dailyWeather.keys.drop(1).forEach { day ->
+                dailyWeather.keys.forEach { day ->
                     val dayWeather = dailyWeather[day]
                     dayWeather?.let {
                         DayWeatherRow(dayWeather)
@@ -66,7 +67,7 @@ fun DayWeatherRow(dayWeather: List<HourlyWeather>) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween) {
 
-            val formattedDayName = dayWeather.last().time.format(DateTimeFormatter.ofPattern("EEE"))
+            val formattedDayName = dayWeather.first().time.format(DateTimeFormatter.ofPattern("EEE"))
             Text(
                 text = formattedDayName,
                 modifier = Modifier.padding(start = 10.dp)
@@ -81,7 +82,9 @@ fun DayWeatherRow(dayWeather: List<HourlyWeather>) {
                         temperature = weatherForImage.temperature,
                         cloudCoverage = weatherForImage.cloudCoverage
                     ),
-                modifier = Modifier.size(70.dp).padding(2.dp)
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(2.dp)
             )
 
             val maxTemperature = dayWeather.maxByOrNull { it.temperature }?.temperature

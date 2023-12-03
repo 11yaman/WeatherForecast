@@ -3,7 +3,7 @@ package com.example.weatherforecast.domain.model
 data class Place(
     val latitude: Float,
     val longitude: Float,
-    val displayName: String ?= null,
-    val name: String? = null,
-    val country: String? = null,
+    val name: String,
+    val country: String,
+    val displayName: String? = null,
 )

@@ -14,7 +14,8 @@ import java.time.LocalDateTime
 @Composable
 fun WeatherImage(currentWeather: HourlyWeather, modifier: Modifier) {
     val weatherImageRes = when {
-        currentWeather.cloudCoverage < 40 -> R.drawable.ic_sunny
+        currentWeather.cloudCoverage < 30 && isDaytime(currentWeather.time) -> R.drawable.ic_sunny
+        currentWeather.cloudCoverage < 30 && !isDaytime(currentWeather.time) -> R.drawable.ic_moon
         currentWeather.cloudCoverage < 90 && isDaytime(currentWeather.time) -> R.drawable.ic_partly_cloudy_day
         currentWeather.cloudCoverage < 90 && !isDaytime(currentWeather.time) -> R.drawable.ic_partly_cloudy_night
         else -> R.drawable.ic_cloudy

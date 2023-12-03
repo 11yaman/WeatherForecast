@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -26,11 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -38,6 +33,7 @@ import com.example.weatherforecast.domain.model.Place
 import com.example.weatherforecast.presentation.navigation.AppScreens
 import com.example.weatherforecast.presentation.viewmodels.SearchViewModel
 import com.example.weatherforecast.presentation.widgets.AppBar
+import com.example.weatherforecast.presentation.widgets.LoadingIndicator
 import com.example.weatherforecast.utils.Response
 import com.example.weatherforecast.utils.showToast
 
@@ -86,12 +82,12 @@ fun SearchScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             when (placeListResult) {
-                is Response.Loading -> CircularProgressIndicator()
+                is Response.Loading -> LoadingIndicator(Modifier)
                 is Response.Success -> placeListResult.data
                     ?.let {
                         PlaceList(it, navController)
                     } ?: showToast(LocalContext.current,
-                    "Couldn't retrieve data")
+                    "Couldn't retrieve places")
                 is Response.Error ->
                     showToast(LocalContext.current,
                         placeListResult.message ?: "Couldn't retrieve data")

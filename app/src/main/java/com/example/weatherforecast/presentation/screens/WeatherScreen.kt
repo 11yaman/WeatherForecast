@@ -1,12 +1,13 @@
 package com.example.weatherforecast.presentation.screens
 
-import android.util.Log
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import com.example.weatherforecast.presentation.components.HourlyWeatherRow
 import com.example.weatherforecast.presentation.navigation.AppScreens
 import com.example.weatherforecast.presentation.viewmodels.WeatherViewModel
 import com.example.weatherforecast.presentation.widgets.AppBar
+import com.example.weatherforecast.presentation.widgets.LoadingIndicator
 import com.example.weatherforecast.utils.Response
 import com.example.weatherforecast.utils.Response.*
 import com.example.weatherforecast.utils.showToast
@@ -33,54 +35,79 @@ import com.example.weatherforecast.utils.showToast
 fun WeatherScreen(
     navController: NavController,
     viewModel: WeatherViewModel = hiltViewModel(),
-    place: Place
+    place: Place?
 ) {
-    Log.d("TAG", "WeatherScreen: $place")
+    val context = LocalContext.current
+
     val result = produceState<Response<Weather>>(
         initialValue = Loading()
     ) {
-        value = viewModel.getWeatherData(place)
+        var res : Response<Weather> = Loading()
+        if (place!=null) {
+            res = viewModel.getWeatherData(place)
+            if(res is Success) res.data?.let { viewModel.saveRecentWeather(it) }
+        }
+
+        val isConn = isConnected(context)
+        if (place==null || res is Error || !isConn) {
+            res = viewModel.getRecentWeather()
+            if(!isConn) showToast(context, "No internet connection")
+        }
+        value = res
     }.value
 
     when (result) {
-        is Loading -> CircularProgressIndicator()
-        is Success -> result.data?.let {
-            WeatherScaffold(it, navController, place)
-        } ?: showToast(LocalContext.current, "Couldn't retrieve weather data")
-        is Error -> showToast(LocalContext.current, "Couldn't retrieve weather data")
+        is Loading -> LoadingIndicator()
+        is Success -> WeatherScaffold(result.data, navController)
+        is Error -> {
+            WeatherScaffold(result.data, navController)
+            showToast(context, "Couldn't retrieve weather data")
+        }
     }
+}
+
+private fun isConnected(context: Context): Boolean {
+    val cmg = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    cmg.getNetworkCapabilities(cmg.activeNetwork)?.let { networkCapabilities ->
+        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    }
+
+    return false
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherScaffold(weather: Weather, navController: NavController, place: Place) {
+fun WeatherScaffold(weather: Weather?, navController: NavController) {
     Scaffold(topBar = {
         AppBar(
-            title = if (!place.name.isNullOrEmpty())
-                place.name + ", " + place.country
-                else "",
+            title = if (weather != null && weather.place.name.isNotEmpty())
+                weather.place.name + ", " + weather.place.country
+                else "Search for weather data",
             currentScreen = AppScreens.WeatherScreen,
             onSearchClick = {
                 navController.navigate(AppScreens.SearchScreen.name)
             }
         )
     }) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(2.dp)
-        ) {
-            item {
-                WeatherCard(weather)
-            }
-            item {
-                HourlyWeatherRow(weather.hourlyWeather)
-            }
-            item {
-                DailyWeatherList(weather.dailyWeather)
+        if (weather!=null) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(2.dp)
+            ) {
+                item {
+                    WeatherCard(weather)
+                }
+                item {
+                    HourlyWeatherRow(weather.hourlyWeather)
+                }
+                item {
+                    DailyWeatherList(weather.dailyWeather)
+                }
             }
         }
     }
