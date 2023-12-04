@@ -29,6 +29,7 @@ import com.example.weatherforecast.presentation.widgets.AppBar
 import com.example.weatherforecast.presentation.widgets.LoadingIndicator
 import com.example.weatherforecast.utils.Response
 import com.example.weatherforecast.utils.Response.*
+import com.example.weatherforecast.utils.isConnectedToNetwork
 import com.example.weatherforecast.utils.showToast
 
 @Composable
@@ -42,16 +43,12 @@ fun WeatherScreen(
     val result = produceState<Response<Weather>>(
         initialValue = Loading()
     ) {
-        var res : Response<Weather> = Loading()
-        if (place!=null) {
-            res = viewModel.getWeatherData(place)
-            if(res is Success) res.data?.let { viewModel.saveRecentWeather(it) }
-        }
+        var res = place?.let { viewModel.getWeatherForPlace(it) }
 
-        val isConn = isConnected(context)
-        if (place==null || res is Error || !isConn) {
+        if (res !is Success) {
+            if(!isConnectedToNetwork(context))
+                showToast(context, "No internet connection")
             res = viewModel.getRecentWeather()
-            if(!isConn) showToast(context, "No internet connection")
         }
         value = res
     }.value
@@ -61,19 +58,9 @@ fun WeatherScreen(
         is Success -> WeatherScaffold(result.data, navController)
         is Error -> {
             WeatherScaffold(result.data, navController)
-            showToast(context, "Couldn't retrieve weather data")
+            showToast(context, "Could not retrieve weather data")
         }
     }
-}
-
-private fun isConnected(context: Context): Boolean {
-    val cmg = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    cmg.getNetworkCapabilities(cmg.activeNetwork)?.let { networkCapabilities ->
-        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-    }
-
-    return false
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

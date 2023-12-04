@@ -31,13 +31,15 @@ fun HourlyWeatherRow(hourlyWeather: Map<LocalDateTime, HourlyWeather>) {
         .padding(2.dp),
         contentPadding = PaddingValues(4.dp)
     ){
-        items(hourlyWeather.keys.filter { it.isAfter(LocalDateTime.now()) }
+        items(hourlyWeather.keys.filter { h ->
+            h.isAfter(LocalDateTime.now().minusHours(1))
+        }
             .take(12)) { hour ->
             val hourWeather = hourlyWeather[hour]
             hourWeather?.let {
                 HourWeatherRow(hourWeather = it)
             } ?: run {
-                showToast(LocalContext.current, "Couldn't retrieve weather data")
+                showToast(LocalContext.current, "Could not retrieve weather data")
             }
         }
     }

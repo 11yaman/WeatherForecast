@@ -87,10 +87,10 @@ fun SearchScreen(
                     ?.let {
                         PlaceList(it, navController)
                     } ?: showToast(LocalContext.current,
-                    "Couldn't retrieve places")
+                    "Could not retrieve places")
                 is Response.Error ->
                     showToast(LocalContext.current,
-                        placeListResult.message ?: "Couldn't retrieve data")
+                        placeListResult.message ?: "Could not retrieve places")
             }
         }
     }
@@ -111,7 +111,6 @@ fun PlaceList(places: List<Place>, navController: NavController) {
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
                         .clickable {
-                            Log.d("TAG", "PlaceList: ${place.latitude}")
                             navController.navigate(
                                 "${AppScreens.WeatherScreen.name}?latitude=${place.latitude}&longitude=${place.longitude}" +
                                         "&name=${place.name}&country=${place.country}"

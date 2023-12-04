@@ -22,7 +22,7 @@ fun WeatherDto.toWeather(weatherPlace: Place): Weather {
     }.toMap().toSortedMap()
 
     val truncatedDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
-    val currentWeather = hourlyWeatherMap[truncatedDateTime.plusHours(1)]
+    val currentWeather = hourlyWeatherMap[truncatedDateTime]
 
     val place = Place(
         latitude = latitude.toFloat(),

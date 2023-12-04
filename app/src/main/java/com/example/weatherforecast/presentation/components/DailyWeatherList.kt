@@ -47,7 +47,7 @@ fun DailyWeatherList(dailyWeather: Map<Int, List<HourlyWeather>>) {
                     dayWeather?.let {
                         DayWeatherRow(dayWeather)
                     } ?: run {
-                        showToast(LocalContext.current, "Couldn't retrieve weather data")
+                        showToast(LocalContext.current, "Could not retrieve weather data")
                     }
                 }
             }

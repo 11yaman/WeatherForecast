@@ -21,12 +21,12 @@ class WeatherPreferences(context: Context) {
         gson = gsonBuilder.create()
     }
 
-    fun saveRecentWeather(weather: Weather) {
+    fun saveRecentWeatherData(weather: Weather) {
         val jsonWeather = gson.toJson(weather)
         sharedPreferences.edit().putString("recentWeather", jsonWeather).apply()
     }
 
-    fun getRecentWeather(): Weather? {
+    fun getRecentWeatherData(): Weather? {
         val jsonWeather = sharedPreferences.getString("recentWeather", null)
         return if (jsonWeather != null) {
             gson.fromJson(jsonWeather, Weather::class.java)

@@ -67,7 +67,7 @@ fun WeatherCard(data: Weather) {
                 )
             }
             else {
-                showToast(LocalContext.current, "Couldn't retrieve current weather")
+                showToast(LocalContext.current, "Could not retrieve current weather")
             }
         }
     }
