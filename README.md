@@ -47,7 +47,3 @@ Contributions are welcome! Feel free to submit issues or pull requests.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
-
-Feel free to customize this template based on your specific project details and preferences. Make sure to update the placeholders such as `your-username` and include any additional information that might be relevant for users and contributors.
